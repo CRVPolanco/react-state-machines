@@ -1,0 +1,22 @@
+.Passengers input {
+  width: calc(100% - 28px);
+  height: 27px;
+  padding: 4px 12px ;
+  margin-bottom: 16px;
+}
+.Passengers p{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.Passengers p button{
+  background-color: #111000;
+}
+.Passengers .ButtonAdd__container{
+  text-align: center;
+}
+.ButtonAdd__container button {
+  background-color: rgb(23, 23, 161);
+  color: #FFF;
+  font-weight: 600;
+}

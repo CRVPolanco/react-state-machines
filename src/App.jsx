@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import BaseLayout from './components/BaseLayout'
+import BaseLayout from './containers/BaseLayout'
 import './styles/App.css'
 
 function App() {

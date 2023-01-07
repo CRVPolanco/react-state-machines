@@ -1,0 +1,6 @@
+.ContinueButton__container{
+  text-align: right;
+}
+.ContinueButton__container button {
+  background-color: #101010;
+}
