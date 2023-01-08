@@ -9,6 +9,8 @@ const BaseLayout = () => {
 
   const [state, send] = useMachine(bookingMachine);
 
+  console.log(state.context);
+
   return(
     <div className='BaseLayout'>
       <Nav state={state} send={send} />

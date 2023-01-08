@@ -2,32 +2,33 @@ import React from 'react';
 import ContinueButton from './ContinueButton';
 import '../styles/Passengers.css';
 
-const Passengers = ({ data, setData, send }) => {
+const Passengers = ({ state, send }) => {
 
-  const [people, setPeople] = React.useState('');
-  const ref = React.useRef(null);
+  const passengersList = state.context.passengers;
 
-  const handleClick = () => {
-    setData([...data, { name: ref.current.value} ]);
-  };
-  const handleRemove = (text) => {
-    const newCopy = [...data].filter(t => t.name !== text);
-    setData([...newCopy]);
+  const [person, setPerson] = React.useState('');
+
+  const handleAdd = () => {
+    send('ADD', { setPassengers: { name: person } });
+    setPerson('');
   }
 
-  console.log(data);
+  const handleRemove = (text) => {
+    const copyPersons = [...passengersList].filter(p => p.name !== text);
+    send('REMOVE', { setPassengers: [...copyPersons] });
+  }
 
-  const handleEvent = () => send('DONE');
+  const handleSend = () => send('DONE');
 
   return(
     <div className='Passengers'>
-      <h2>Select your companions</h2>
-      {data.map(el => (
+      <h2>Select the passengers</h2>
+      {passengersList.map(el => (
         <p key={el.name}>{el.name}<button onClick={() => handleRemove(el.name)}>X</button></p>
       ))}
-      <input type="text" ref={ref}/>
-      <div className="ButtonAdd__container"> <button onClick={handleClick}>Add</button> </div>
-      <ContinueButton title="Get a Ticket" event={handleEvent}/>
+      <input type="text" onChange={e => setPerson(e.target.value)} value={person}/>
+      <div className="ButtonAdd__container"> <button onClick={handleAdd}>Add</button> </div>
+      <ContinueButton title="Get a Ticket" event={handleSend} isDisabled={passengersList.length < 1} />
     </div>
   )
 };

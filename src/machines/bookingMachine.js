@@ -1,44 +1,119 @@
 import { createMachine, assign } from "xstate";
+import { fetchCountries }  from '../utils/countryList';
+
+const fillCountriesMachine = {
+  initial: "loading",
+  predictableActionArguments: true,
+  states: {
+    loading: {
+      invoke: {
+      id: 'getCountries',
+      src: () => fetchCountries,
+      onDone: {
+        target: 'success',
+        actions: assign({
+          countries: (context, event) => event.data
+        }),
+      },
+      onError: {
+        target: 'retry',
+        actions: assign({
+          error: (context, event) => 'Request failed with status ' + event.data
+        })
+        }
+      }
+    },
+    success:{},
+    retry: {
+      on: {
+        RETRY: { target: "loading" },
+      }
+    }
+   },
+ }
 
 const bookingMachine = createMachine({
-  id: "buy_plane_tickets",
+  id: "buy plane tickets",
   initial: "initial",
   predictableActionArguments: true,
+  context: {
+    passengers: [],
+    countries: [],
+    selectedCountry: '',
+    error: ''
+  },
   states: {
     initial: {
       on: {
         START: {
           target: "search",
-          actions: 'printInit'
         }
       }
     },
     search: {
-      entry: 'printEntry',
-      exit: 'printExit',
       on: {
-        CONTINUE: "passengers",
-        CANCEL: "initial"
-      }
+        CONTINUE: {
+          target: "passengers",
+          actions: 'addCountry'
+        },
+        CANCEL: {
+          target: "initial",
+          actions: 'reset',
+        }
+      },
+      ...fillCountriesMachine,
     },
     passengers: {
       on: {
-        DONE: "tickets",
-        CANCEL: "initial",
+        ADD: {
+          target: 'passengers',
+          actions: 'addPassengers',
+        },
+        REMOVE: {
+          target: 'passengers',
+          actions: 'removePassengers',
+        },
+        DONE: {
+          target: "tickets",
+          cond: 'handleMinimunOne',
+        },
+        CANCEL: {
+          target: "initial",
+          actions: 'reset',
+        },
       }
     },
     tickets: {
       on: {
-        FINISH: "initial",
+        FINISH: {
+          target: "initial",
+          actions: 'reset',
+        },
       },
     },
   },
   },
   {
     actions: {
-      printInit: () => console.log("print init"),
-      printEntry: () => console.log("Printing entry"),
-      printExit: () => console.log("Printing exit"),
+      reset: assign({
+        selectedCountry: '',
+        passengers: [],
+        error: '',
+      }),
+      addPassengers: assign({
+        passengers: (context, event) => [...context.passengers, event.setPassengers],
+      }),
+      removePassengers: assign({
+        passengers: (context, event) => [...event.setPassengers],
+      }),
+      addCountry: assign({
+        selectedCountry: (context, event) => event.selectedCountry
+      }),
+    },
+    guards: {
+      handleMinimunOne: (context) => {
+        return context.passengers.length > 0;
+      }
     }
 })
 

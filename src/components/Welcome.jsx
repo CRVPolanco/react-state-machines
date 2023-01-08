@@ -1,11 +1,10 @@
 import React from 'react';
 import ContinueButton from './ContinueButton';
 
-const Welcome = ({ send, reset }) => {
+const Welcome = ({ send }) => {
 
   const event = () => {
     send('START')
-    reset();
   };
 
   return(

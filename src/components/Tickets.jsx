@@ -2,9 +2,11 @@ import React from 'react';
 import ContinueButton from './ContinueButton';
 import '../styles/Tickets.css';
 
-const Tickets = ({ country, passengers, send }) => {
+const Tickets = ({ state, send }) => {
 
   const sendTo = () => send('FINISH')
+
+  const { passengers, selectedCountry } = state.context;
 
   return (
     <>
@@ -13,7 +15,7 @@ const Tickets = ({ country, passengers, send }) => {
     <section className='Tickets'>
 
       <div className="Tickets__show-country">
-        <p>{country}</p>
+        <p>{selectedCountry}</p>
       </div>
       <div className="Tickets__show-passenger">
         {passengers.map(p => (
